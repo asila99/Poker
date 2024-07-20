@@ -23,3 +23,4 @@ public class Deck {
         return cards.remove(0);
     }
 }
+
