@@ -7,7 +7,6 @@ public class HandEvaluator {
         combined.addAll(communityCards);
         Collections.sort(combined, (a, b) -> b.getRank() - a.getRank());
 
-
         if (isStraightFlush(combined)) return HandType.STRAIGHT_FLUSH;
         if (isFourOfAKind(combined)) return HandType.FOUR_OF_A_KIND;
         if (isFullHouse(combined)) return HandType.FULL_HOUSE;
