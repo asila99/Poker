@@ -106,13 +106,15 @@ public class HandEvaluator {
 
         switch (handType1) {
             case STRAIGHT_FLUSH:
-            case STRAIGHT:
-                return compareHighestCard(hand1, hand2);
+                return compareStraightFlush(hand1, hand2);
             case FOUR_OF_A_KIND:
-            case FULL_HOUSE:
                 return compareByRankFrequency(hand1, hand2, 4);
+            case FULL_HOUSE:
+                return compareByRankFrequency(hand1, hand2, 3);
             case FLUSH:
                 return compareHighestCard(hand1, hand2);
+            case STRAIGHT:
+                return compareStraight(hand1, hand2);
             case THREE_OF_A_KIND:
                 return compareByRankFrequency(hand1, hand2, 3);
             case TWO_PAIR:
@@ -123,6 +125,37 @@ public class HandEvaluator {
             default:
                 return 0;
         }
+    }
+
+    private static int compareStraightFlush(List<Card> hand1, List<Card> hand2) {
+        return compareStraight(hand1, hand2);
+    }
+
+    private static int compareStraight(List<Card> hand1, List<Card> hand2) {
+        int highCard1 = getHighestCardInStraight(hand1);
+        int highCard2 = getHighestCardInStraight(hand2);
+        return Integer.compare(highCard1, highCard2);
+    }
+
+    private static int getHighestCardInStraight(List<Card> hand) {
+        Set<Integer> uniqueRanks = new TreeSet<>();
+        for (Card card : hand) {
+            uniqueRanks.add(card.getRank());
+        }
+
+        List<Integer> sortedRanks = new ArrayList<>(uniqueRanks);
+
+        for (int i = sortedRanks.size() - 1; i >= 4; i--) {
+            if (sortedRanks.get(i) - sortedRanks.get(i - 4) == 4) {
+                return sortedRanks.get(i);
+            }
+        }
+
+        if (sortedRanks.contains(12) && sortedRanks.subList(0, 4).equals(Arrays.asList(0, 1, 2, 3))) {
+            return 3;
+        }
+
+        return sortedRanks.get(sortedRanks.size() - 1);
     }
 
     private static int compareHighestCard(List<Card> hand1, List<Card> hand2) {
@@ -138,7 +171,7 @@ public class HandEvaluator {
     private static int compareByRankFrequency(List<Card> hand1, List<Card> hand2, int frequency) {
         int rank1 = getHighestRankByFrequency(hand1, frequency);
         int rank2 = getHighestRankByFrequency(hand2, frequency);
-        return rank1 - rank2;
+        return Integer.compare(rank1, rank2);
     }
 
     private static int getHighestRankByFrequency(List<Card> hand, int frequency) {
